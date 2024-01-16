@@ -7,8 +7,6 @@ use std::ops::SubAssign;
 use bls12_381::G1Affine;
 use bls12_381::G2Affine;
 use bls12_381::Scalar as Fr;
-use bls12_381::Bls12 as S;
-use rand::Rng;
 use rand::RngCore;
 use rand::thread_rng;
 
@@ -84,6 +82,20 @@ impl Polynomial{
 
         Polynomial::new(final_coef)
     }
+
+    pub fn mul(poly1: &Polynomial, poly2: &Polynomial) -> Polynomial {
+        let final_degree = poly1.coef.len() + poly2.coef.len()-1;
+        let mut final_coef: Vec<Fr> = vec![Fr::zero(); final_degree];
+
+        for i in 0..poly1.coef.len(){
+            for j in 0..poly2.coef.len(){
+                final_coef[i+j] += poly1.coef[i] * poly2.coef[j];
+            }
+        }
+
+        Polynomial::new(final_coef)
+
+    }
 }
 
 
@@ -108,7 +120,7 @@ mod test{
         let a0 = Fr::from(2);
         let a1 = Fr::from(1);
 
-        let mut vec_coef = vec![a0,a1];
+        let vec_coef = vec![a0,a1];
 
         let poly = Polynomial::new(vec_coef);
 
@@ -174,6 +186,37 @@ mod test{
 
         assert_eq!(result_pol, Polynomial::sub(&pol2, &pol1));
     }
-        
+    
+    #[test]
+    pub fn mul(){
+        let a0 = Fr::from(2);
+        let a1 = Fr::from(1);
+
+        let vec_coef = vec![a0,a1];
+        // pol1(x) = 2 * x^0 + 1 * x^1  
+        let pol1 = Polynomial::new(vec_coef);
+
+        let b0 = Fr::from(3);
+        let b1 = Fr::from(12);
+        let b2 = Fr::from(10);
+
+        let vec_coef2 = vec![b0,b1,b2];
+        // pol2(x) = 3 * x^0 + 12 * x^1 + 10 * x^2
+        let pol2 = Polynomial::new(vec_coef2);
+
+        let c0 = Fr::from(6);
+        let c1 = Fr::from(27);
+        let c2 = Fr::from(32);
+        let c3 = Fr::from(10);
+
+        let vec_coef3 = vec![c0,c1,c2,c3];
+        // Pol2(x) -  Pol1(x) = 
+        // result_pol(x)     = 6 * x^0 + 27 * x^1 + 32 * x^2 + 10 * x^3 
+        let result_pol = Polynomial::new(vec_coef3);
+
+
+        assert_eq!(result_pol, Polynomial::mul(&pol2, &pol1));
+    }
+    
     
 }
