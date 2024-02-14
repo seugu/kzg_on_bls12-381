@@ -3,6 +3,7 @@ use std::cmp::min;
 use std::ops::Add;
 use std::ops::AddAssign;
 use std::ops::SubAssign;
+use std::vec;
 
 use bls12_381::G1Affine;
 use bls12_381::G2Affine;
@@ -95,6 +96,20 @@ impl Polynomial{
 
         Polynomial::new(final_coef)
 
+    }
+
+    // calculates poly1 = poly2 * quotient + residue
+    pub fn div(poly1: &Polynomial, poly2: &Polynomial) -> Polynomial {
+        let poly1coef: Vec<Fr> = poly1.coef.iter().rev().cloned().collect();
+
+        let mut final_coef: Vec<Fr> = vec![poly1coef[0]];
+
+        for i in 0..poly1.coef.len()-2 {
+            final_coef.push(poly1coef[i+1] - final_coef[i] * poly2.coef[0]);
+        }
+
+        final_coef.reverse();
+        Polynomial::new(final_coef)
     }
 }
 
@@ -216,6 +231,35 @@ mod test{
 
 
         assert_eq!(result_pol, Polynomial::mul(&pol2, &pol1));
+    }
+
+     #[test]
+    pub fn div(){
+        let a0 = Fr::from(2);
+        let a1 = Fr::from(1);
+
+        let vec_coef = vec![a0,a1];
+        // pol1(x) = x + 2 
+        let pol1 = Polynomial::new(vec_coef);
+
+        let b0 = Fr::from(3);
+        let b1 = Fr::from(12);
+        let b2 = Fr::from(6);
+
+        let vec_coef2 = vec![b0,b1,b2];
+        // pol2(x) = 6x2 + 12x + 3 
+        let pol2 = Polynomial::new(vec_coef2);
+
+        let c0 = Fr::zero();
+        let c1 = Fr::from(6);
+
+        let vec_coef3 = vec![c0,c1];
+        // Pol2(x) -  Pol1(x) = 
+        // result_pol(x)     = 6 * x^0 + 27 * x^1 + 32 * x^2 + 10 * x^3 
+        let result_pol = Polynomial::new(vec_coef3);
+
+
+        assert_eq!(result_pol, Polynomial::div(&pol2, &pol1));
     }
     
     
