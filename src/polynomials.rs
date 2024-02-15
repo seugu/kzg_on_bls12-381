@@ -6,7 +6,9 @@ use std::ops::SubAssign;
 use std::vec;
 
 use bls12_381::G1Affine;
+use bls12_381::G1Projective;
 use bls12_381::G2Affine;
+use bls12_381::G2Projective;
 use bls12_381::Scalar as Fr;
 use rand::RngCore;
 use rand::thread_rng;
@@ -110,6 +112,22 @@ impl Polynomial{
 
         final_coef.reverse();
         Polynomial::new(final_coef)
+    }
+
+    pub fn commitG1(poly: &Polynomial, srsG1: &Vec<G1Projective>) -> G1Projective {
+        let mut commitment = G1Projective::default(); 
+        for i in 0..poly.coef.len(){
+            commitment += srsG1[i] * poly.coef[i];
+        } 
+        commitment
+    }
+
+    pub fn commitG2(poly: &Polynomial, srsG1: &Vec<G2Projective>) -> G2Projective {
+        let mut commitment = G2Projective::default(); 
+        for i in 0..poly.coef.len(){
+            commitment += srsG2[i] * poly.coef[i];
+        } 
+        commitment
     }
 }
 
