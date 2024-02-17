@@ -1,10 +1,4 @@
-use std::cmp::max;
-use std::cmp::min;
-use std::ops::Add;
-use std::ops::AddAssign;
 use std::ops::Mul;
-use std::ops::SubAssign;
-use std::vec;
 
 use bls12_381::G1Affine;
 use bls12_381::G1Projective;

@@ -1,3 +1,4 @@
+use std::clone;
 use std::cmp::max;
 use std::cmp::min;
 use std::ops::Add;
@@ -25,9 +26,9 @@ impl Field for Fr {
     }
 }
 
-#[derive(Debug,PartialEq)]
+#[derive(Debug,PartialEq,Clone)]
 pub struct Polynomial{
-    coef: Vec<Fr>,
+    pub coef: Vec<Fr>,
 }
 
 impl Polynomial{
@@ -122,7 +123,7 @@ impl Polynomial{
         commitment
     }
 
-    pub fn commitG2(poly: &Polynomial, srsG1: &Vec<G2Projective>) -> G2Projective {
+    pub fn commitG2(poly: &Polynomial, srsG2: &Vec<G2Projective>) -> G2Projective {
         let mut commitment = G2Projective::default(); 
         for i in 0..poly.coef.len(){
             commitment += srsG2[i] * poly.coef[i];
