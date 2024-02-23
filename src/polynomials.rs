@@ -115,20 +115,20 @@ impl Polynomial{
         Polynomial::new(final_coef)
     }
 
-    pub fn commitG1(poly: &Polynomial, srsG1: &Vec<G1Projective>) -> G1Projective {
+    pub fn commitG1(poly: &Polynomial, srsG1: &Vec<G1Affine>) -> G1Affine {
         let mut commitment = G1Projective::default(); 
         for i in 0..poly.coef.len(){
             commitment += srsG1[i] * poly.coef[i];
         } 
-        commitment
+        commitment.into()
     }
 
-    pub fn commitG2(poly: &Polynomial, srsG2: &Vec<G2Projective>) -> G2Projective {
+    pub fn commitG2(poly: &Polynomial, srsG2: &Vec<G2Affine>) -> G2Affine {
         let mut commitment = G2Projective::default(); 
         for i in 0..poly.coef.len(){
             commitment += srsG2[i] * poly.coef[i];
         } 
-        commitment
+        commitment.into()
     }
 }
 

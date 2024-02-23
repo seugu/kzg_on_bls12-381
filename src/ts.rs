@@ -22,8 +22,8 @@ impl Field for Fr {
 
 
 pub struct trustedSetup {
-    pub g1: Vec<G1Projective>,
-    pub g2: Vec<G2Projective>
+    pub g1: Vec<G1Affine>,
+    pub g2: Vec<G2Affine>
 }
 
 
@@ -34,14 +34,14 @@ pub fn generatorTS( nDegree: usize) -> trustedSetup {
     let randomSecret: Fr = Field::random(&mut thread_rng());
     println!("randomsecret:{}",randomSecret);
     
-    let mut srsG1: Vec<G1Projective> = Vec::new(); 
-    let mut srsG2: Vec<G2Projective> = Vec::new(); 
+    let mut srsG1: Vec<G1Affine> = Vec::new(); 
+    let mut srsG2: Vec<G2Affine> = Vec::new(); 
 
     let mut exponent = Fr::one();
 
     for _ in 0..nDegree{
-        srsG1.push(generator_g1.mul(exponent));
-        srsG2.push(generator_g2.mul(exponent));
+        srsG1.push(generator_g1.mul(exponent).into());
+        srsG2.push(generator_g2.mul(exponent).into());
         exponent *= randomSecret;
     }
 
